@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jardim das Borboletas da Heloísa</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;padding:22px 15px;
+ font-family:Georgia,serif;
+ color:#754b60;
+ text-align:center;
+ background:linear-gradient(145deg,#fff8fb,#fff0f5,#fffaf1);
+}
+h1{font-size:27px;font-weight:normal;margin:12px 0}
+p{font-size:16px;line-height:1.5}
+.butterfly{font-size:30px}
+.frames{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.frame{
+ width:145px;padding:8px;background:white;
+ border:2px solid #e8b7cc;border-radius:75px 75px 12px 12px;
+ box-shadow:0 3px 12px #d9a8bc55;cursor:pointer;
+}
+.frame.selected{outline:3px solid #bd7898}
+.frame img{width:100%;height:175px;object-fit:cover;border-radius:65px 65px 5px 5px}
+.frame span{display:block;font-size:13px;padding:8px 0}
+button,.upload{
+ display:inline-block;margin:10px 4px;padding:13px 18px;
+ border:0;border-radius:25px;background:#bd7898;color:white;
+ font-size:15px;cursor:pointer;
+}
+input{display:none}
+#preview{display:none;max-width:100%;width:320px;margin:18px auto;border-radius:12px}
+#result{display:none}
+footer{font-size:13px;margin-top:25px;color:#a47a8e}
+</style>
+</head>
+<body>
+<div class="butterfly">🦋 🌸 🦋</div>
+<h1>Jardim das Borboletas<br>da Heloísa</h1>
+<p>Uma lembrança especial deste dia encantado!<br>Escolha sua moldura e registre esse momento.</p>
+
+<div class="frames">
+ <div class="frame selected" onclick="choose(0)" id="f0">
+  <img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400" alt="Flores delicadas">
+  <span>🌸 Moldura 1</span>
+ </div>
+ <div class="frame" onclick="choose(1)" id="f1">
+  <img src="https://images.unsplash.com/photo-1499002238440-d264edd596ec?w=400" alt="Jardim florido">
+  <span>🦋 Moldura 2</span>
+ </div>
+</div>
+
+<p>Agora tire uma foto ou escolha uma da galeria:</p>
+<label class="upload" for="photo">📷 Escolher foto</label>
+<input type="file" id="photo" accept="image/*" capture="environment">
+
+<div id="result">
+ <canvas id="canvas" style="display:none"></canvas>
+ <img id="preview" alt="Sua foto com moldura">
+ <br>
+ <button onclick="save()">💗 Salvar foto</button>
+ <button onclick="again()">Escolher outra</button>
+</div>
+
+<footer>Com carinho, aniversário de 1 aninho da Heloísa 🦋</footer>
+
+<script>
+let selected=0;
+function choose(n){
+ selected=n;
+ document.getElementById('f0').classList.toggle('selected',n===0);
+ document.getElementById('f1').classList.toggle('selected',n===1);
+}
+document.getElementById('photo').addEventListener('change',function(e){
+ const file=e.target.files[0];
+ if(!file)return;
+ const img=new Image();
+ img.onload=()=>{
+  const c=document.getElementById('canvas');
+  const ctx=c.getContext('2d');
+  const w=900,h=1200;
+  c.width=w;c.height=h;
+  ctx.fillStyle='#fff8fb';ctx.fillRect(0,0,w,h);
+  const scale=Math.max(760/img.width,760/img.height);
+  const iw=img.width*scale,ih=img.height*scale;
+  ctx.save();
+  ctx.beginPath();ctx.roundRect(65,90,770,850,65);ctx.clip();
+  ctx.drawImage(img,(w-iw)/2,(h-ih)/2-30,iw,ih);
+  ctx.restore();
+  ctx.strokeStyle=selected===0?'#d99bb8':'#c99ab0';
+  ctx.lineWidth=15;
+  ctx.beginPath();ctx.roundRect(48,72,804,886,75);ctx.stroke();
+  ctx.fillStyle='#9a617c';ctx.textAlign='center';
+  ctx.font='65px Georgia';ctx.fillText('🦋',450,1030);
+  ctx.font='42px Georgia';
+  ctx.fillText('Jardim das Borboletas',450,1090);
+  ctx.font='38px Georgia';
+  ctx.fillText('da Heloísa',450,1140);
+  document.getElementById('preview').src=c.toDataURL('image/jpeg',.95);
+  document.getElementById('preview').style.display='block';
+  document.getElementById('result').style.display='block';
+ };
+ img.src=URL.createObjectURL(file);
+});
+function save(){
+ const a=document.createElement('a');
+ a.download='Jardim-das-Borboletas-da-Heloisa.jpg';
+ a.href=document.getElementById('canvas').toDataURL('image/jpeg',.95);
+ a.click();
+}
+function again(){
+ document.getElementById('photo').value='';
+ document.getElementById('result').style.display='none';
+ document.getElementById('preview').style.display='none';
+}
+</script>
+</body>
+</html>
